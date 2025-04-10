@@ -31,6 +31,21 @@
   "manifest": {
     "permissions": [
       "contextMenus"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "html/popup-word-container.html",
+          "assets/iconn.svg",
+          "assets/bad_words.json"
+        ],
+        "matches": [
+          "https://*/*"
+        ]
+      }
+    ],
+    "host_permissions": [
+      "https://*/*"
     ]
   }
 }

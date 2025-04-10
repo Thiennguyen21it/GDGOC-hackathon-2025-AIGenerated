@@ -1,9 +1,7 @@
 import type { PlasmoCSConfig } from "plasmo";
 
 export const config: PlasmoCSConfig = {
-	matches: ["https://www.facebook.com/*","https://www.tiktok.com/*"],
-	all_frames: true,
-	run_at: "document_start"
+	matches: ["https://www.facebook.com/*","https://www.tiktok.com/*"]
 };
 
 
