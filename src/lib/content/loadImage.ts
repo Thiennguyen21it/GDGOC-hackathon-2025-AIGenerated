@@ -26,6 +26,25 @@ const loadImage = (src: string) =>
 				ctx.drawImage(img, 0, 0);
 				const imageData = ctx.getImageData(0, 0, img.width, img.height);
 
+				 let rgbArray = [];
+				// for (let y = 0; y < img.height; y++) {
+				// 	let row = [];
+				// 	for (let x = 0; x < img.width; x++) {
+				// 		let index = (y * img.width + x) * 4;
+				// 		let pixel = [
+				// 			imageData.data[index], // Red
+				// 			imageData.data[index + 1], // Green
+				// 			imageData.data[index + 2] // Blue
+				// 		];
+				// 		row.push(pixel);
+				// 	}
+				// 	rgbArray.push(row);
+				// }
+				console.log({ rgbArray });
+				resolve(rgbArray);
+
+				console.log({ imageData });
+				resolve(Array.from(imageData.data));
 				resolve(Array.from(imageData.data));
 			}
 			// Fail out if either dimension is less than MIN_IMG_SIZE.

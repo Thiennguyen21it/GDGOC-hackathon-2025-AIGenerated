@@ -43,9 +43,9 @@ export default class DOMWatcher implements IDOMWatcher {
 
 	private findAndCheckAllImages(element: Element): void {
 		const images = element.getElementsByTagName("img");
-		// for (let i = 0; i < images.length; i++) {
-		// this.filter.analyze(images[i], false)
-		// }
+		 for (let i = 0; i < images.length; i++) {
+		 this.filter.analyze(images[i], false)
+		}
 	}
 
 	private checkAttributeMutation(mutation: MutationRecord): void {
