@@ -11,7 +11,7 @@ export default class ViolentModel extends Model {
 
 		this.name = "Violent Model";
 		this.type = IType.IMAGE;
-		this.IMG_SIZE = 128;
+		this.IMG_SIZE = 256;
 
 		this.loadModel();
 	}
@@ -38,29 +38,44 @@ export default class ViolentModel extends Model {
 		}
 	}
 
-	private async analyze(
-		imageData:
-			| ImageData
-			| { data: Uint8Array; width: number; height: number }
-	) {
+	private async analyze(imageData: number[]) {
 		return tf.tidy(() => {
-			const imgTensor = tf.browser.fromPixels(imageData);
-			const normalized = imgTensor
-				.toFloat()
-				.div(tf.scalar(255)) as tf.Tensor3D;
-			let resized = normalized;
-			if (
-				imgTensor.shape[0] !== this.IMG_SIZE ||
-				imgTensor.shape[1] !== this.IMG_SIZE
-			) {
-				resized = tf.image.resizeBilinear(
-					normalized,
-					[this.IMG_SIZE, this.IMG_SIZE],
-					true
-				);
-			}
+			const imgData = new ImageData(this.IMG_SIZE, this.IMG_SIZE);
+			imgData.data.set(new Uint8ClampedArray(imageData));
 
-			const batched = resized.reshape([
+			const imgTensor = tf.cast(
+				tf.browser.fromPixels(imgData),
+				"float32"
+			);
+
+			const offset = tf.scalar(127.5);
+			const normalized = imgTensor.sub(offset).div(offset);
+			// const normalized = imgTensor.div(offset);
+
+			// const normalized = imgTensor
+			// 	.toFloat()
+			// 	.div(tf.scalar(255)) as tf.Tensor3D;
+
+			// let resized = normalized;
+			// if (
+			// 	imgTensor.shape[0] !== this.IMG_SIZE ||
+			// 	imgTensor.shape[1] !== this.IMG_SIZE
+			// ) {
+			// 	resized = tf.image.resizeBilinear(
+			// 		normalized,
+			// 		[this.IMG_SIZE, this.IMG_SIZE],
+			// 		true
+			// 	);
+			// }
+
+			// const batched = resized.reshape([
+			// 	1,
+			// 	this.IMG_SIZE,
+			// 	this.IMG_SIZE,
+			// 	3
+			// ]);
+
+			const batched = normalized.reshape([
 				1,
 				this.IMG_SIZE,
 				this.IMG_SIZE,
@@ -69,7 +84,7 @@ export default class ViolentModel extends Model {
 
 			// this model is multi output, third output is the one we want (violent level)
 			const predictions = this.model.predict(batched) as tf.Tensor[];
-			return predictions[2];
+			return predictions;
 		});
 	}
 

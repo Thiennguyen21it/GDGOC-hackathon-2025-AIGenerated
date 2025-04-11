@@ -31,9 +31,7 @@ export default class NSFWModel extends Model {
 		try {
 			this.model = await tf.loadLayersModel(this.modelPath);
 			tf.tidy(() => {
-				this.model.predict(
-					tf.zeros([1, this.IMG_SIZE, this.IMG_SIZE, 3])
-				);
+				this.model.predict(tf.zeros([1, 224, 224, 3]));
 			});
 
 			const totalTime = Math.floor(performance.now() - startTime);
@@ -44,30 +42,19 @@ export default class NSFWModel extends Model {
 	}
 
 	public async analyze(imageData: ImageData) {
-		// const img = await this.loadImage(imgUrl)
 		return tf.tidy(() => {
 			const imgTensor = tf.browser.fromPixels(imageData);
 			const normalized = imgTensor
 				.toFloat()
 				.div(tf.scalar(255)) as tf.Tensor3D;
-			let resized = normalized;
-			if (
-				imgTensor.shape[0] !== this.IMG_SIZE ||
-				imgTensor.shape[1] !== this.IMG_SIZE
-			) {
-				resized = tf.image.resizeBilinear(
-					normalized,
-					[this.IMG_SIZE, this.IMG_SIZE],
-					true
-				);
-			}
+			console.log("[NSFModel] normalized", normalized);
+			const resized = tf.image.resizeBilinear(
+				normalized,
+				[224, 224],
+				true
+			);
 
-			const batched = resized.reshape([
-				1,
-				this.IMG_SIZE,
-				this.IMG_SIZE,
-				3
-			]);
+			const batched = resized.reshape([1, 224, 224, 3]);
 			const prediction = this.model.predict(batched) as tf.Tensor2D;
 			return prediction;
 			// console.log({ prediction }, prediction.dataSync())
@@ -80,12 +67,28 @@ export default class NSFWModel extends Model {
 	}): Promise<boolean> {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const { imgData, tabId } = payload;
+				const { imgData } = payload;
+
+				if (!imgData) {
+					resolve(false);
+					return;
+				}
+
+				console.log(
+					"[NSFWModel] imgData",
+					imgData
+					// new ImageData()
+
+					// Uint8ClampedArray.from(imgData),
+					// this.IMG_SIZE,
+					// this.IMG_SIZE
+				);
 				const imageData = new ImageData(
-					Uint8ClampedArray.from(imgData),
+					Uint8ClampedArray.from(Object.values(imgData)),
 					this.IMG_SIZE,
 					this.IMG_SIZE
 				);
+				console.log({ imageData });
 				const prediction = await this.analyze(imageData);
 				const topK = await getTopKClasses(prediction);
 
