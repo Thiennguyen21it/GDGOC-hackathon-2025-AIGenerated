@@ -73,11 +73,16 @@
     pdfborder={0 0 0},
 }
 
+% Cấu hình font chữ cho tiếng Việt
+\renewcommand{\rmdefault}{lmr} % Latin Modern Roman
+\renewcommand{\sfdefault}{lmss} % Latin Modern Sans
+\renewcommand{\ttdefault}{lmtt} % Latin Modern Typewriter
+
 \begin{document}
 
 \begin{titlepage}
 \centering
-\includegraphics[width=0.5\textwidth]{media/guardiannet-logo.png}\\[1cm]
+\includegraphics[width=0.5\textwidth]{./Images/guardiannet-logo.png}\\[1cm]
 {\Huge\bfseries GuardianNet\\[0.5cm]}
 {\large\bfseries Công cụ bảo vệ trực tuyến bằng AI\\[2cm]}
 
@@ -146,7 +151,7 @@ Ngoài ra, GuardianNet còn quét nội dung văn bản để phát hiện các 
 
 \subsection{Xử lý nội dung tự động}
 
-Khi extension được kích hoạt, những hình ảnh trên web sẽ tự động được load và được đưa vào pre-trained model MobileNetV2 kết hợp với mô hình đa tác vụ giúp nhận diện ảnh bạo lực và sự hiện diện của người. Các kết quả của hai nhiệm vụ được mã hóa thành chuỗi nhị phân ``ab''. Với quy tắc:
+Khi extension được kích hoạt, những hình ảnh trên web sẽ tự động được load và đưa vào pre-trained model MobileNetV2 kết hợp với mô hình đa tác vụ giúp nhận diện ảnh bạo lực và sự hiện diện của người. Các kết quả của hai nhiệm vụ được mã hóa thành chuỗi nhị phân ``ab''. Với quy tắc:
 
 \begin{itemize}
   \item ``a'' biểu thị kết quả của nhiệm vụ bạo lực (0: không bạo lực, 1: bạo lực).
@@ -237,7 +242,7 @@ Hoặc tải file zip chúng tôi cung cấp: link [], giải nén và thực hi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{media/image1.png}
+  \includegraphics[width=0.7\textwidth]{./Images/image1.png}
   \caption{Trang Extensions của Chrome}
 \end{figure}
 
@@ -245,7 +250,7 @@ Hoặc tải file zip chúng tôi cung cấp: link [], giải nén và thực hi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{media/image2.png}
+  \includegraphics[width=0.8\textwidth]{./Images/image2.png}
   \caption{Kích hoạt chế độ nhà phát triển}
 \end{figure}
 
@@ -253,7 +258,7 @@ Hoặc tải file zip chúng tôi cung cấp: link [], giải nén và thực hi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{media/image3.png}
+  \includegraphics[width=0.8\textwidth]{./Images/image3.png}
   \caption{Tải extension đã giải nén}
 \end{figure}
 
@@ -261,7 +266,7 @@ Hoặc tải file zip chúng tôi cung cấp: link [], giải nén và thực hi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{media/image6.png}
+  \includegraphics[width=0.9\textwidth]{./Images/image6.png}
   \caption{Chọn thư mục build}
 \end{figure}
 
@@ -269,7 +274,7 @@ Hoặc tải file zip chúng tôi cung cấp: link [], giải nén và thực hi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{media/image4.png}
+  \includegraphics[width=0.9\textwidth]{./Images/image4.png}
   \caption{Extension đã cài đặt thành công}
 \end{figure}
 
@@ -277,7 +282,7 @@ Giờ bạn có thể bật extension và test thử bằng cách truy cập nh�
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{media/image7.png}
+  \includegraphics[width=0.9\textwidth]{./Images/image7.png}
   \caption{Giao diện extension khi kích hoạt}
 \end{figure}
 
@@ -285,7 +290,7 @@ Giờ bạn có thể bật extension và test thử bằng cách truy cập nh�
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{media/image8.png}
+  \includegraphics[width=0.9\textwidth]{./Images/image8.png}
   \caption{Kiến trúc tổng thể của GuardianNet}
 \end{figure}
 
