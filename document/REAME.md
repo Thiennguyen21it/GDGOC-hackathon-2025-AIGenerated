@@ -2,5 +2,5 @@
 
 ```sh
 docker build -t latex .
-docker run --rm -i -v "$PWD":/data latex pdflatex ./Latex/GuardianNet.tex
+docker run --rm -i -v "$PWD":/data latex ./Latex/GuardianNet.tex
 ```
