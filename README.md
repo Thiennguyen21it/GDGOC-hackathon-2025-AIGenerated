@@ -1,6 +1,16 @@
 # GDGOC-hackathon-2025-AIGenerated
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+This is our project for GDGOC hackathon 2025 - GuardianNet is an AI-powered browser extension designed to protect users from online threats and misinformation.
 
+## Documentation
+- [Project Documentation](/document/GuardianNet.pdf)
+
+## Extension Overview
+![Resume Screenshot](/guardianNet.jpg)
+
+## Extension Workflow
+![Resume Screenshot](/extension_workflow.jpg)
+
+## Documentation
 ## Getting Started
 
 First, run the development server:
@@ -33,10 +43,6 @@ This should create a production bundle for your extension, ready to be zipped an
 
 The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
 
-## Extension Overview
-![Resume Screenshot](/guardianNet.jpg)
 
-## Extension Workflow
-![Resume Screenshot](/extension_workflow.jpg)
 
 
