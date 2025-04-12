@@ -19,7 +19,7 @@ class QueueWrapper extends Queue {
 				console.warn("it is in queue");
 				this.requestMap.get(url).push({ resolve, reject });
 			} else {
-				console.warn("add to queue");
+				console.warn("add to queue 222");
 				this.requestMap.set(url, [{ resolve, reject }]);
 				this.add({
 					type: IType.IMAGE,

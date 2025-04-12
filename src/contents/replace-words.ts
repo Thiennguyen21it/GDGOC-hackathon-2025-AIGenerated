@@ -1,113 +1,159 @@
 import type { PlasmoCSConfig } from "plasmo";
 
+import DOMWatcher from "~lib/content/DomWatcher";
+import TextFilter from "~lib/content/filters/TextFilter";
+
 export const config: PlasmoCSConfig = {
-	matches: ["https://www.facebook.com/*","https://www.tiktok.com/*"]
+	// matches: ["https://www.facebook.com/*","https://www.tiktok.com/*"]
+	matches: ["<all_urls>"]
 };
 
+// fetch(badWordsUrl)
+// 	.then((response) => {
+// 		if (!response.ok) {
+// 			throw new Error("Network response was not ok");
+// 		}
+// 		console.log(response);
+// 		return response.json();
+// 	})
+// 	.then((badWords) => {
+// 		console.log("badWords", badWords);
+// 		const mutationObserver = new MutationObserver((mutations) => {
+// 			mutations.forEach((mutation) => {
+// 				// Handle changes in characterData (text nodes)
+// 				if (
+// 					mutation.type === "characterData" &&
+// 					mutation.target.nodeValue
+// 				) {
+// 					const originalText = mutation.target.nodeValue;
+// 					// console.log(originalText);
 
-const badWordsUrl = chrome.runtime.getURL("assets/bad_words.json");
-console.log(badWordsUrl);
+// 					// Preserve selection range
+// 					const selection = window.getSelection();
+// 					const range = selection.getRangeAt(0);
+// 					const startOffset = range.startOffset;
+// 					const endOffset = range.endOffset;
 
-fetch(badWordsUrl)
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    console.log(response);
-    return response.json();
-  })
-  .then((badWords) => {
-    const mutationObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        // Handle changes in characterData (text nodes)
-        if (mutation.type === "characterData" && mutation.target.nodeValue) {
-          const originalText = mutation.target.nodeValue;
-          // console.log(originalText);
+// 					const newText = replaceWordsInText(originalText);
+// 					// console.log(newText);
 
-          // Preserve selection range
-          const selection = window.getSelection();
-          const range = selection.getRangeAt(0);
-          const startOffset = range.startOffset;
-          const endOffset = range.endOffset;
+// 					if (originalText !== newText) {
+// 						mutation.target.nodeValue = newText; // Update the actual DOM node with the new text
 
-          const newText = replaceWordsInText(originalText);
-          // console.log(newText);
+// 						// Restore selection range
+// 						range.setStart(
+// 							mutation.target,
+// 							Math.min(startOffset, newText.length)
+// 						);
+// 						range.setEnd(
+// 							mutation.target,
+// 							Math.min(endOffset, newText.length)
+// 						);
+// 						selection.removeAllRanges();
+// 						selection.addRange(range);
+// 					}
+// 				}
 
-          if (originalText !== newText) {
-            mutation.target.nodeValue = newText; // Update the actual DOM node with the new text
+// 				// Handle changes in child nodes (element nodes)
+// 				if (
+// 					mutation.type === "childList" &&
+// 					mutation.addedNodes.length > 0
+// 				) {
+// 					mutation.addedNodes.forEach((addedNode) => {
+// 						if (addedNode.nodeType === Node.TEXT_NODE) {
+// 							const originalText = addedNode.nodeValue;
+// 							// console.log(originalText);
 
-            // Restore selection range
-            range.setStart(mutation.target, Math.min(startOffset, newText.length));
-            range.setEnd(mutation.target, Math.min(endOffset, newText.length));
-            selection.removeAllRanges();
-            selection.addRange(range);
-          }
-        }
+// 							const newText = replaceWordsInText(originalText);
+// 							// console.log(newText);
 
-        // Handle changes in child nodes (element nodes)
-        if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-          mutation.addedNodes.forEach((addedNode) => {
-            if (addedNode.nodeType === Node.TEXT_NODE) {
-              const originalText = addedNode.nodeValue;
-              // console.log(originalText);
+// 							if (originalText !== newText) {
+// 								addedNode.nodeValue = newText;
+// 							}
+// 						} else if (addedNode.nodeType === Node.ELEMENT_NODE) {
+// 							// Handle newly added elements, you may need to traverse the subtree
+// 							// and replace words in their text nodes as well
+// 							replaceWordsInElement(addedNode);
+// 						}
+// 					});
+// 				}
+// 			});
+// 		});
 
-              const newText = replaceWordsInText(originalText);
-              // console.log(newText);
+// 		// Start observing the document for changes
+// 		mutationObserver.observe(document, {
+// 			childList: true,
+// 			subtree: true,
+// 			characterData: true,
+// 			attributes: true
+// 		});
 
-              if (originalText !== newText) {
-                addedNode.nodeValue = newText;
-              }
-            } else if (addedNode.nodeType === Node.ELEMENT_NODE) {
-              // Handle newly added elements, you may need to traverse the subtree
-              // and replace words in their text nodes as well
-              replaceWordsInElement(addedNode);
-            }
-          });
-        }
-      });
-    });
+// 		console.log("MutationObserver is active!");
 
-    // Start observing the document for changes
-    mutationObserver.observe(document, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-      attributes: true
-    });
+// 		// Function to replace words in a given text
+// 		function replaceWordsInText(text) {
+// 			for (const word in badWords) {
+// 				if (badWords.hasOwnProperty(word)) {
+// 					const regex = new RegExp(
+// 						`(?<=^|[^\\p{Script=Latn}])${word}(?=[^\\p{Script=Latn}]|$)`,
+// 						"giu"
+// 					);
+// 					if (regex.test(text)) {
+// 						text = text.replace(regex, badWords[word]);
+// 					}
+// 				}
+// 			}
+// 			return text;
+// 		}
 
-    console.log("MutationObserver is active!");
+// 		// Function to replace words in the text nodes of an element and its descendants
+// 		function replaceWordsInElement(element) {
+// 			const walker = document.createTreeWalker(
+// 				element,
+// 				NodeFilter.SHOW_TEXT,
+// 				{ acceptNode: (node) => NodeFilter.FILTER_ACCEPT }
+// 			);
 
-    // Function to replace words in a given text
-    function replaceWordsInText(text) {
-      for (const word in badWords) {
-        if (badWords.hasOwnProperty(word)) {
-          const regex = new RegExp(`(?<=^|[^\\p{Script=Latn}])${word}(?=[^\\p{Script=Latn}]|$)`, "giu");
-          if (regex.test(text)) {
-            text = text.replace(regex, badWords[word]);
-          }
-        }
-      }
-      return text;
-    }
+// 			let textNode;
+// 			while ((textNode = walker.nextNode())) {
+// 				const originalText = textNode.nodeValue;
+// 				// console.log(originalText);
 
-    // Function to replace words in the text nodes of an element and its descendants
-    function replaceWordsInElement(element) {
-      const walker = document.createTreeWalker(element,NodeFilter.SHOW_TEXT,{ acceptNode: (node) => NodeFilter.FILTER_ACCEPT });
+// 				const newText = replaceWordsInText(originalText);
+// 				// console.log(newText);
 
-      let textNode;
-      while ((textNode = walker.nextNode())) {
-        const originalText = textNode.nodeValue;
-        // console.log(originalText);
+// 				if (originalText !== newText) {
+// 					textNode.nodeValue = newText;
+// 				}
+// 			}
+// 		}
+// 	})
+// 	.catch((error) => {
+// 		console.error("Error fetching or parsing JSON:", error);
+// 	});
 
-        const newText = replaceWordsInText(originalText);
-        // console.log(newText);
+const init = async (): Promise<void> => {
+	console.log("[TextFilter] Init");
 
-        if (originalText !== newText) {
-          textNode.nodeValue = newText;
-        }
-      }
-    }
-  })
-  .catch((error) => {
-    console.error("Error fetching or parsing JSON:", error);
-  });
+	// const badWordsUrl = chrome.runtime.getURL("assets/bad_words.json");
+	// const badWordsRes = await fetch(badWordsUrl);
+	// if (!badWordsRes.ok) {
+	// 	throw new Error("Network response was not ok");
+	// }
+	// const badWords = await badWordsRes.json();
+	// console.log("badWords", badWords);
+
+	const textFilter = new TextFilter();
+	const domWatcher = new DOMWatcher(textFilter, {
+		subtree: true,
+		childList: true,
+		characterData: true,
+		attributes: false
+	});
+
+	domWatcher.watch();
+};
+
+if (window.self === window.top) {
+	init();
+}

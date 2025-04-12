@@ -5,10 +5,6 @@ export interface IFilter {
 	filter: () => void;
 }
 
-export interface IDeb {
-
-}
-
 export default class Filter implements IFilter {
 	public async analyze(target: any) {}
 

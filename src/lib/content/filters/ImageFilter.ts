@@ -6,37 +6,65 @@ import loadImage from "../loadImage";
 import Filter from "./Filter";
 
 export default class ImageFilter extends Filter {
+	private t0: number;
+	constructor() {
+		super();
+		this.t0 = performance.now();
+	}
+
 	public async analyze(target: Element) {
-		if (target.nodeName !== "IMG") return;
+		if (target.nodeName !== "IMG") {
+			// const imgEles = target.getElementsByTagName("img");
+			// console.log({ imgEles });
+			// for (let i = 0; i < imgEles.length; i++) {
+			// 	await this.analyze(imgEles[i]);
+			// }
+
+			return;
+		}
 		const img = target as HTMLImageElement;
 
 		// analyze
-		img.style.border = "10px solid blue";
+		// img.style.border = "1px solid blue";
+		img.style.border = "2px solid green";
+
 		// check if it is base64
 		// otherwise, fetch image data
 		if (/^data:image\/[a-zA-Z]*;base64,/.test(img.src)) {
-			console.log("base64", base64ToArrayBuffer(img.src));
+			// console.log("base64", base64ToArrayBuffer(img.src));
 		}
+
 		// const imgData = /^data:image\/[a-zA-Z]*;base64,/.test(img.src)
 		// 	? base64ToArrayBuffer(img.src)
 		// 	: await loadImage(img.src);
+
 		const imgData = await loadImage(img.src);
 		const req = new Request(IType.IMAGE, imgData, {
 			url: img.src
 		});
+
 		chrome.runtime.sendMessage(req, (res: Response) => {
 			if (!res) {
-				img.style.border = "10px solid gray";
+				img.style.border = "2px solid gray";
 				return;
 			}
 			const { result } = res;
+			const t1 = performance.now();
 			if (result) {
 				img.style.filter = "blur(25px)";
-				console.log({ img }, " is nsfw");
+				// console.log(
+				// 	{ img },
+				// 	" is nsfw - ",
+				// 	t1 - this.t0 + " milliseconds."
+				// );
 			} else {
-				console.log({ img }, " is neutral");
+				// console.log(
+				// 	{ img },
+				// 	" is neutral - ",
+				// 	t1 - this.t0 + " milliseconds."
+				// );
 			}
-			img.style.border = "10px solid red";
+			img.style.border = "2px solid red";
 		});
 	}
 
