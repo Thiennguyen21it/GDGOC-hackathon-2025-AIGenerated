@@ -5,12 +5,19 @@ import Request, { IType } from "~lib/Request";
 import Response from "~lib/Response";
 
 const nsfwModel = new NSFWModel("../../models/nsfw-mobilenet/model.json");
-const violentModel = new ViolentModel("../../models/violence-model/model.json");
-const queue = new QueueWrapper([nsfwModel, violentModel], 100);
+// const violentModel = new ViolentModel("../../models/violence-model/model.json");
+const queue = new QueueWrapper(
+	[
+		nsfwModel
+		// violentModel
+	],
+	100
+);
 
 chrome.runtime.onMessage.addListener(
 	async (message: Request, sender, sendResponse) => {
 		const tabId = sender.tab.id;
+		console.log("background message", message);
 
 		try {
 			if (message.type === IType.IMAGE) {

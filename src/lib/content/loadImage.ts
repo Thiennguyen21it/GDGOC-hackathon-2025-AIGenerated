@@ -23,10 +23,10 @@ const loadImage = (src: string) =>
 				// to the service worker.
 				const canvas = new OffscreenCanvas(img.width, img.height);
 				const ctx = canvas.getContext("2d");
-				ctx.drawImage(img, 0, 0);
+				ctx.drawImage(img, 0, 0, IMG_SIZE, IMG_SIZE);
 				const imageData = ctx.getImageData(0, 0, img.width, img.height);
 
-				 let rgbArray = [];
+				// let rgbArray = [];
 				// for (let y = 0; y < img.height; y++) {
 				// 	let row = [];
 				// 	for (let x = 0; x < img.width; x++) {
@@ -40,17 +40,18 @@ const loadImage = (src: string) =>
 				// 	}
 				// 	rgbArray.push(row);
 				// }
-				console.log({ rgbArray });
-				resolve(rgbArray);
+				// console.log({ rgbArray });
+				// resolve(rgbArray);
 
-				console.log({ imageData });
-				resolve(Array.from(imageData.data));
-				resolve(Array.from(imageData.data));
+				// console.log({ imageData });
+				// resolve(Array.from(imageData.data));
+				resolve(imageData.data);
 			}
+			resolve(undefined);
 			// Fail out if either dimension is less than MIN_IMG_SIZE.
-			reject(
-				`Image size too small. [${img.height} x ${img.width}] vs. minimum [${MIN_IMG_SIZE} x ${MIN_IMG_SIZE}]`
-			);
+			// reject(
+			// 	`Image size too small. [${img.height} x ${img.width}] vs. minimum [${MIN_IMG_SIZE} x ${MIN_IMG_SIZE}]`
+			// );
 		};
 		img.src = src;
 	});

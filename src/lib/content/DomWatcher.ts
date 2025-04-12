@@ -10,8 +10,6 @@ import type IFilter from "./filters/Filter";
 // @TODO <div> and <a>
 // @TODO video
 
-// import { IImageFilter } from "../Filter/ImageFilter"
-
 export type IDOMWatcher = {
 	watch: () => void;
 };
@@ -19,50 +17,85 @@ export type IDOMWatcher = {
 export default class DOMWatcher implements IDOMWatcher {
 	private readonly observer: MutationObserver;
 	private readonly filter: IFilter;
+	private readonly config: MutationObserverInit;
 
-	constructor(filter: IFilter) {
+	constructor(filter: IFilter, config?: MutationObserverInit) {
 		this.filter = filter;
 		this.observer = new MutationObserver(this.callback.bind(this));
-	}
-
-	public watch(): void {
-		this.observer.observe(document, DOMWatcher.getConfig());
-	}
-
-	private async callback(mutationsList: MutationRecord[]) {
-		for (let i = 0; i < mutationsList.length; i++) {
-			const mutation = mutationsList[i];
-			// if (
-			// 	mutation.type === "childList" &&
-			// 	mutation.addedNodes.length > 0
-			// ) {
-			// }
-			await this.filter.analyze(mutation.target);
-		}
-	}
-
-	private findAndCheckAllImages(element: Element): void {
-		const images = element.getElementsByTagName("img");
-		 for (let i = 0; i < images.length; i++) {
-		 this.filter.analyze(images[i], false)
-		}
-	}
-
-	private checkAttributeMutation(mutation: MutationRecord): void {
-		if ((mutation.target as HTMLImageElement).nodeName === "IMG") {
-			// this.filter.analyze(
-			//   mutation.target as HTMLImageElement,
-			// mutation.attributeName === "src"
-			// )
-		}
-	}
-
-	private static getConfig(): MutationObserverInit {
-		return {
+		this.config = config || {
 			subtree: true,
 			childList: true,
 			attributes: true,
+			characterData: true,
 			attributeFilter: ["src"]
 		};
+	}
+
+	public watch(): void {
+		console.log("[DOMWatcher] watch", this.config);
+		// Process existing content first
+		this.processExistingContent(document.body);
+		// Start observing future changes
+		this.observer.observe(document, this.config);
+	}
+
+	private async callback(mutationsList: MutationRecord[]) {
+		for (const mutation of mutationsList) {
+			if (mutation.type === "characterData") {
+				// Direct text content change
+				await this.filter.analyze(mutation.target);
+			} else if (mutation.type === "childList") {
+				// Handle added nodes
+				for (const node of mutation.addedNodes) {
+					await this.processNode(node);
+				}
+			} else if (mutation.type === "attributes") {
+				// Handle attribute changes that might affect content
+				await this.filter.analyze(mutation.target);
+			}
+		}
+	}
+
+	private async processNode(node: Node): Promise<void> {
+		if (node.nodeType === Node.TEXT_NODE) {
+			await this.filter.analyze(node);
+		} else if (node.nodeType === Node.ELEMENT_NODE) {
+			// Process the element itself
+			await this.filter.analyze(node);
+
+			// Process all text nodes within this element
+			const walker = document.createTreeWalker(
+				node,
+				NodeFilter.SHOW_TEXT,
+				null
+			);
+
+			let textNode;
+			while ((textNode = walker.nextNode())) {
+				await this.filter.analyze(textNode);
+			}
+		}
+	}
+
+	private async processExistingContent(root: Node): Promise<void> {
+		// Process all existing text nodes
+		const walker = document.createTreeWalker(
+			root,
+			NodeFilter.SHOW_TEXT,
+			null
+		);
+
+		let textNode;
+		while ((textNode = walker.nextNode())) {
+			await this.filter.analyze(textNode);
+		}
+
+		// Process all existing elements
+		if (root instanceof Element) {
+			const elements = root.querySelectorAll("*");
+			for (const element of elements) {
+				await this.filter.analyze(element);
+			}
+		}
 	}
 }
