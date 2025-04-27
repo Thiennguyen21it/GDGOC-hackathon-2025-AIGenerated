@@ -1,3 +1,5 @@
+import { Storage } from "@plasmohq/storage";
+
 import type Request from "~lib/Request";
 import { IType } from "~lib/Request";
 
@@ -30,12 +32,15 @@ class Queue {
 	protected cache: Map<string, boolean> = new Map();
 	protected requestMap: Map<string, QueueRequest> = new Map();
 
+	private storage: Storage;
+
 	constructor(models: Model[], timeout: number) {
 		this.models = models;
 		this.timeout = timeout;
 		this.running = false;
 
 		this.tasks = [];
+		this.storage = new Storage();
 	}
 
 	protected add(task: Task) {

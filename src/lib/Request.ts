@@ -1,18 +1,19 @@
 export enum IType {
-  IMAGE = "IMAGE",
-  VIDEO = "VIDEO",
-  TEXT = "TEXT",
-  IMG_DATA = "IMG_DATA"
+	IMAGE = "IMAGE",
+	VIDEO = "VIDEO",
+	TEXT = "TEXT",
+	IMG_DATA = "IMG_DATA",
+	SETTINGS = "SETTINGS"
 }
 
 export default class Request {
-  type: IType
-  payload: any
-  meta: Record<string, any>
+	type: IType;
+	payload: any;
+	meta: Record<string, any>;
 
-  constructor(type: IType, payload: any, meta?: Record<string, any>) {
-    this.type = type
-    this.payload = payload
-    this.meta = meta
-  }
+	constructor(type: IType, payload: any, meta?: Record<string, any>) {
+		this.type = type;
+		this.payload = payload;
+		this.meta = meta;
+	}
 }

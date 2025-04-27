@@ -1,3 +1,6 @@
+import type { PlasmoMessaging } from "@plasmohq/messaging";
+import { Storage } from "@plasmohq/storage";
+
 import NSFWModel from "~lib/background/models/NSFWModel";
 import ViolentModel from "~lib/background/models/ViolentModel";
 import QueueWrapper from "~lib/background/queue/QueueWrapper";
@@ -16,8 +19,20 @@ const queue = new QueueWrapper(
 
 chrome.runtime.onMessage.addListener(
 	async (message: Request, sender, sendResponse) => {
-		const tabId = sender.tab.id;
-		console.log("background message", message);
+		console.log("background message", message, sender);
+		const storage = new Storage();
+
+		if (message.type === IType.SETTINGS) {
+			await storage.set(IType.SETTINGS, message.payload);
+			console.log("Settings saved", message.payload);
+			return;
+		}
+
+		const tabId = sender?.tab?.id;
+		if (!tabId) {
+			console.error("No tabId found in sender");
+			return;
+		}
 
 		try {
 			if (message.type === IType.IMAGE) {
